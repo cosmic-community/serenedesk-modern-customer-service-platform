@@ -3,6 +3,9 @@ import FeaturedProducts from '@/components/FeaturedProducts'
 import CustomerTestimonials from '@/components/CustomerTestimonials'
 import AnnouncementBanner from '@/components/AnnouncementBanner'
 import FeaturedResources from '@/components/FeaturedResources'
+import AwardsSection from '@/components/AwardsSection'
+import AIServiceSection from '@/components/AIServiceSection'
+import ServiceSolutions from '@/components/ServiceSolutions'
 import { 
   getFeaturedProducts, 
   getCustomerStories,
@@ -24,6 +27,9 @@ export default async function HomePage() {
         <AnnouncementBanner announcements={announcements} />
       )}
       <Hero />
+      <AwardsSection />
+      <AIServiceSection />
+      <ServiceSolutions />
       <FeaturedProducts products={products} />
       {customerStories.length > 0 && (
         <CustomerTestimonials stories={customerStories} />
