@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { FaBars, FaTimes, FaSparkles } from 'react-icons/fa'
+import { FaBars, FaTimes, FaStar } from 'react-icons/fa'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,7 +22,7 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             <div className="flex items-center space-x-1">
-              <FaSparkles className="text-green-500 text-sm" />
+              <FaStar className="text-green-500 text-sm" />
               <Link href="/products" className="text-gray-700 hover:text-zendesk-green transition-colors font-medium">
                 Zendesk AI Agents
               </Link>
@@ -90,7 +90,7 @@ export default function Header() {
           <div className="lg:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center space-x-1">
-                <FaSparkles className="text-green-500 text-sm" />
+                <FaStar className="text-green-500 text-sm" />
                 <Link 
                   href="/products" 
                   className="text-gray-700 hover:text-zendesk-green transition-colors font-medium"
