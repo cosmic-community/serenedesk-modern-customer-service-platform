@@ -4,115 +4,113 @@ import ResourceFilter from '@/components/ResourceFilter'
 import SearchBar from '@/components/SearchBar'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { getResources } from '@/lib/cosmic'
-import { ResourceType } from '@/types'
+import { Resource } from '@/types'
 
-// Define the available resource types
-const resourceTypes: { key: ResourceType; label: string }[] = [
-  { key: 'blog', label: 'Blog Posts' },
-  { key: 'guide', label: 'Guides' },
-  { key: 'report', label: 'Reports' },
-  { key: 'webinar', label: 'Webinars' },
-  { key: 'video', label: 'Videos' },
-  { key: 'whitepaper', label: 'Whitepapers' },
-]
-
-interface ResourcesPageProps {
-  searchParams: Promise<{ type?: string; search?: string }>
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
-  // In Next.js 15+, searchParams is a Promise and must be awaited
-  const params = await searchParams
-  const selectedType = params.type || ''
-  const searchQuery = params.search || ''
+async function ResourcesContent({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+  const type = typeof searchParams.type === 'string' ? searchParams.type : undefined
+  const search = typeof searchParams.search === 'string' ? searchParams.search : ''
 
-  // Fetch resources based on filters
-  const resources = await getResources(selectedType || undefined)
+  let resources: Resource[] = []
+  
+  try {
+    resources = await getResources(type)
+  } catch (error) {
+    console.error('Error fetching resources:', error)
+  }
 
-  // Filter resources by search query if provided
-  const filteredResources = searchQuery
-    ? resources.filter(resource => 
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.metadata?.excerpt?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : resources
+  // Filter by search query if provided
+  if (search) {
+    resources = resources.filter(resource => 
+      resource.title.toLowerCase().includes(search.toLowerCase()) ||
+      resource.metadata?.excerpt?.toLowerCase().includes(search.toLowerCase()) ||
+      resource.metadata?.author?.toLowerCase().includes(search.toLowerCase())
+    )
+  }
 
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
-    { label: 'Resources', href: '/resources' },
+    { label: 'Resources', href: '/resources' }
   ]
+
+  const handleSearch = (query: string) => {
+    const params = new URLSearchParams(window.location.search)
+    if (query) {
+      params.set('search', query)
+    } else {
+      params.delete('search')
+    }
+    window.history.pushState({}, '', `${window.location.pathname}?${params}`)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumbs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Breadcrumbs items={breadcrumbItems} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Breadcrumbs items={breadcrumbItems} />
+        
+        <div className="mt-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Resources</h1>
+          <p className="text-xl text-gray-600 mb-8">
+            Discover insights, guides, and tools to help you deliver exceptional customer service.
+          </p>
         </div>
-      </div>
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
-              Resources & Insights
-            </h1>
-            <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover guides, reports, and insights to help you deliver exceptional customer experiences
-            </p>
+        {/* Filters and Search */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex-1">
+            <SearchBar 
+              placeholder="Search resources..."
+              onSearch={handleSearch}
+            />
           </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Search and Filters */}
-        <div className="mb-8">
-          <SearchBar 
-            placeholder="Search resources..." 
-            initialValue={searchQuery}
-          />
+          <ResourceFilter currentType={type} />
         </div>
 
-        <ResourceFilter
-          types={resourceTypes}
-          selectedType={selectedType}
-          onTypeChange={(type: string) => {
-            // This would typically update URL params in a client component
-            // For now, we'll handle this through URL navigation
-            const url = new URL(window.location.href)
-            if (type) {
-              url.searchParams.set('type', type)
-            } else {
-              url.searchParams.delete('type')
-            }
-            window.location.href = url.toString()
-          }}
-        />
+        {/* Results */}
+        {resources.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg mb-4">
+              {search ? `No resources found for "${search}"` : 'No resources available'}
+            </p>
+            {search && (
+              <button
+                onClick={() => handleSearch('')}
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <p className="text-gray-600">
+                {search ? `Found ${resources.length} resource${resources.length !== 1 ? 's' : ''} for "${search}"` : `${resources.length} resource${resources.length !== 1 ? 's' : ''} available`}
+              </p>
+            </div>
 
-        {/* Resources Grid */}
-        <Suspense fallback={<div className="text-center py-12">Loading resources...</div>}>
-          {filteredResources.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredResources.map((resource) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {resources.map((resource) => (
                 <ResourceCard key={resource.id} resource={resource} />
               ))}
             </div>
-          ) : (
-            <div className="text-center py-16">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No resources found
-              </h3>
-              <p className="text-gray-600">
-                {searchQuery || selectedType
-                  ? 'Try adjusting your filters or search terms.'
-                  : 'Check back later for new resources.'}
-              </p>
-            </div>
-          )}
-        </Suspense>
+          </>
+        )}
       </div>
     </div>
+  )
+}
+
+export default async function ResourcesPage({ searchParams }: PageProps) {
+  // In Next.js 15+, searchParams is a Promise and must be awaited
+  const resolvedSearchParams = await searchParams
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResourcesContent searchParams={resolvedSearchParams} />
+    </Suspense>
   )
 }
