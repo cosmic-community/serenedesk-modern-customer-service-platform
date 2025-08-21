@@ -3,34 +3,60 @@
 import { useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
-export default function SearchBar() {
-  const [searchQuery, setSearchQuery] = useState('')
+interface SearchBarProps {
+  placeholder?: string
+  onSearch?: (query: string) => void
+}
 
-  const handleSearch = (e: React.FormEvent) => {
+export default function SearchBar({ placeholder = 'Search...', onSearch }: SearchBarProps) {
+  const [query, setQuery] = useState('')
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement search functionality
-    console.log('Searching for:', searchQuery)
+    if (onSearch) {
+      onSearch(query)
+    }
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value
+    setQuery(newQuery)
+    
+    // Call onSearch immediately for real-time filtering
+    if (onSearch) {
+      onSearch(newQuery)
+    }
   }
 
   return (
-    <form onSubmit={handleSearch} className="relative">
+    <form onSubmit={handleSubmit} className="relative">
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <FaSearch className="h-5 w-5 text-gray-400" />
         </div>
         <input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search articles, FAQs, and guides..."
-          className="block w-full pl-10 pr-12 py-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          type="text"
+          value={query}
+          onChange={handleChange}
+          className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base"
+          placeholder={placeholder}
         />
-        <button
-          type="submit"
-          className="absolute inset-y-0 right-0 px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-        >
-          Search
-        </button>
+        {query && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery('')
+              if (onSearch) {
+                onSearch('')
+              }
+            }}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            <span className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer">
+              ×
+            </span>
+          </button>
+        )}
       </div>
     </form>
   )
