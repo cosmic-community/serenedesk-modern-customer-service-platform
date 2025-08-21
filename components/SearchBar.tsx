@@ -1,67 +1,45 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { FaSearch, FaTimes } from 'react-icons/fa'
+import { useState } from 'react'
+import { FaSearch } from 'react-icons/fa'
 
 export interface SearchBarProps {
-  placeholder?: string
+  placeholder: string
   defaultValue?: string
-  onSearch: (query: string) => void
-  className?: string
+  onSearch?: (query: string) => void
 }
 
-export default function SearchBar({ 
-  placeholder = "Search...", 
-  defaultValue = "",
-  onSearch,
-  className = ""
-}: SearchBarProps) {
+export default function SearchBar({ placeholder, defaultValue = '', onSearch }: SearchBarProps) {
   const [query, setQuery] = useState(defaultValue)
-
-  useEffect(() => {
-    setQuery(defaultValue)
-  }, [defaultValue])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSearch(query)
+    if (onSearch) {
+      onSearch(query)
+    }
   }
 
-  const handleClear = () => {
-    setQuery('')
-    onSearch('')
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setQuery(value)
     
-    // Optional: trigger search on every change (debounced)
-    // For now, we'll only search on submit or clear
+    // Call onSearch immediately for live search if provided
+    if (onSearch) {
+      onSearch(value)
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`relative ${className}`}>
+    <form onSubmit={handleSubmit} className="relative max-w-md mx-auto">
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <FaSearch className="h-5 w-5 text-gray-400" />
-        </div>
         <input
           type="text"
           value={query}
-          onChange={handleInputChange}
+          onChange={handleChange}
           placeholder={placeholder}
-          className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        {query && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-          >
-            <FaTimes className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-          </button>
-        )}
+        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
     </form>
   )

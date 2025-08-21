@@ -3,121 +3,97 @@ import SearchBar from '@/components/SearchBar'
 import CategoryCard from '@/components/CategoryCard'
 import ArticleCard from '@/components/ArticleCard'
 import FAQAccordion from '@/components/FAQAccordion'
-import Breadcrumbs from '@/components/Breadcrumbs'
-import { getArticles, getFAQs, getHelpCategories } from '@/lib/cosmic'
-import { Article, FAQ, HelpCategory } from '@/types'
-
-interface BreadcrumbItem {
-  label: string
-  href: string
-}
+import { getHelpCategories, getArticles, getFAQs } from '@/lib/cosmic'
+import { HelpCategory, Article, FAQ } from '@/types'
 
 export default async function HelpPage() {
-  const [articles, faqs, categories] = await Promise.all([
+  const [categories, articles, faqs] = await Promise.all([
+    getHelpCategories(),
     getArticles(),
-    getFAQs(), 
-    getHelpCategories()
+    getFAQs()
   ])
-
-  const featuredArticles = articles.filter((article: Article) => article.metadata?.featured)
-  const featuredFAQs = faqs.filter((faq: FAQ) => faq.metadata?.featured)
-
-  const breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Home', href: '/' },
-    { label: 'Help Center', href: '/help' }
-  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Breadcrumbs items={breadcrumbItems} />
-        
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            How can we help you?
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Find answers to your questions and get the help you need
-          </p>
-          <div className="max-w-2xl mx-auto">
-            <SearchBar placeholder="Search for help articles, guides, and FAQs..." />
+      {/* Hero Section */}
+      <section className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              How can we help you?
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              Find answers to common questions and get the help you need
+            </p>
+            
+            <Suspense fallback={<div className="h-12 bg-gray-200 rounded-lg animate-pulse max-w-md mx-auto"></div>}>
+              <SearchBar 
+                placeholder="Search for articles and FAQs..." 
+                onSearch={() => {}} 
+              />
+            </Suspense>
           </div>
         </div>
+      </section>
 
-        {/* Help Categories */}
-        {categories.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Browse by Category</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Help Categories */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Browse by Category
+          </h2>
+          
+          {categories.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
               {categories.map((category: HelpCategory) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
             </div>
-          </section>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Featured Articles */}
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Popular Articles</h2>
-            <div className="space-y-6">
-              {featuredArticles.length > 0 ? (
-                featuredArticles.slice(0, 5).map((article: Article) => (
-                  <ArticleCard 
-                    key={article.id} 
-                    article={article}
-                    showExcerpt={true}
-                  />
-                ))
-              ) : (
-                <p className="text-gray-600">No featured articles available.</p>
-              )}
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No help categories available at the moment.</p>
             </div>
-            {articles.length > 5 && (
-              <div className="mt-8">
-                <button className="text-blue-600 hover:text-blue-700 font-medium">
-                  View all articles →
-                </button>
-              </div>
-            )}
-          </section>
-
-          {/* Featured FAQs */}
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Frequently Asked Questions</h2>
-            {featuredFAQs.length > 0 ? (
-              <FAQAccordion faqs={featuredFAQs.slice(0, 5)} />
-            ) : (
-              <p className="text-gray-600">No featured FAQs available.</p>
-            )}
-            {faqs.length > 5 && (
-              <div className="mt-8">
-                <button className="text-blue-600 hover:text-blue-700 font-medium">
-                  View all FAQs →
-                </button>
-              </div>
-            )}
-          </section>
+          )}
         </div>
+      </section>
 
-        {/* Contact Support */}
-        <section className="mt-16 bg-white rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Still need help?
+      {/* Featured Articles */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Popular Articles
           </h2>
-          <p className="text-gray-600 mb-6">
-            Our support team is here to help you get the most out of our platform
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="btn-primary">
-              Contact Support
-            </button>
-            <button className="btn-secondary">
-              Community Forum
-            </button>
-          </div>
-        </section>
-      </div>
+          
+          {articles.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {articles.slice(0, 6).map((article: Article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No articles available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Frequently Asked Questions
+          </h2>
+          
+          {faqs.length > 0 ? (
+            <FAQAccordion faqs={faqs.slice(0, 10)} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No FAQs available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   )
 }
