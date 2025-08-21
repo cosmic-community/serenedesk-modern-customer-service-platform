@@ -1,163 +1,202 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { Resource } from '@/types'
-import { getResources } from '@/lib/cosmic'
+import { Suspense } from 'react'
 import ResourceCard from '@/components/ResourceCard'
 import ResourceFilter from '@/components/ResourceFilter'
 import SearchBar from '@/components/SearchBar'
 import Breadcrumbs from '@/components/Breadcrumbs'
+import { getResources } from '@/lib/cosmic'
+import { Resource } from '@/types'
 
-export default function ResourcesPage() {
-  const [resources, setResources] = useState<Resource[]>([])
-  const [filteredResources, setFilteredResources] = useState<Resource[]>([])
-  const [selectedType, setSelectedType] = useState<string>('')
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [loading, setLoading] = useState(true)
+interface BreadcrumbItem {
+  label: string
+  href: string
+}
 
-  const breadcrumbs = [
-    { name: 'Home', href: '/' },
-    { name: 'Resources', href: '/resources' }
-  ]
+interface ResourceFilterProps {
+  resourceTypes: { key: string; label: string }[]
+  selectedType: string
+  onTypeChange: (type: string) => void
+}
 
-  useEffect(() => {
-    async function fetchResources() {
-      try {
-        const data = await getResources()
-        setResources(data)
-        setFilteredResources(data)
-      } catch (error) {
-        console.error('Error fetching resources:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchResources()
-  }, [])
+// Resource type mappings
+const RESOURCE_TYPES = [
+  { key: '', label: 'All Resources' },
+  { key: 'blog', label: 'Blog Posts' },
+  { key: 'guide', label: 'Guides' },
+  { key: 'report', label: 'Reports' },
+  { key: 'webinar', label: 'Webinars' },
+  { key: 'video', label: 'Videos' },
+  { key: 'whitepaper', label: 'Whitepapers' }
+]
 
-  useEffect(() => {
-    let filtered = resources
+interface ResourcesPageProps {
+  searchParams?: {
+    type?: string
+    search?: string
+  }
+}
 
-    // Filter by type
-    if (selectedType) {
-      filtered = filtered.filter(resource => 
-        resource.metadata?.resource_type?.key === selectedType
-      )
-    }
+export default async function ResourcesPage({ 
+  searchParams 
+}: ResourcesPageProps) {
+  const selectedType = searchParams?.type || ''
+  const searchQuery = searchParams?.search || ''
 
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(resource =>
-        resource.title.toLowerCase().includes(query) ||
-        resource.metadata?.excerpt?.toLowerCase().includes(query) ||
-        resource.metadata?.author?.toLowerCase().includes(query) ||
-        resource.metadata?.tags?.some(tag => 
-          tag.name.toLowerCase().includes(query)
+  // Fetch resources based on type filter
+  const resources = await getResources(selectedType || undefined)
+
+  // Filter by search query if provided
+  const filteredResources = searchQuery
+    ? resources.filter((resource: Resource) =>
+        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.metadata?.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.metadata?.tags?.some((tag) =>
+          tag.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       )
-    }
+    : resources
 
-    setFilteredResources(filtered)
-  }, [resources, selectedType, searchQuery])
+  // Group resources by type for display
+  const groupedResources = RESOURCE_TYPES.reduce((acc, type) => {
+    if (type.key === '') return acc // Skip "All Resources"
+    
+    acc[type.key] = filteredResources.filter((resource: Resource) => 
+      resource.metadata?.resource_type?.key === type.key
+    )
+    return acc
+  }, {} as Record<string, Resource[]>)
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query)
-  }
+  // Get featured resources
+  const featuredResources = filteredResources.filter((resource: Resource) => 
+    resource.metadata?.featured
+  )
 
-  const handleTypeFilter = (type: string) => {
-    setSelectedType(type)
-  }
-
-  const resourceTypes = [
-    { key: '', label: 'All Resources' },
-    { key: 'blog', label: 'Blog Posts' },
-    { key: 'guide', label: 'Guides' },
-    { key: 'report', label: 'Reports' },
-    { key: 'webinar', label: 'Webinars' },
-    { key: 'video', label: 'Videos' },
-    { key: 'whitepaper', label: 'Whitepapers' }
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Home', href: '/' },
+    { label: 'Resources', href: '/resources' }
   ]
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading resources...</p>
-        </div>
-      </div>
-    )
+  const handleTypeChange = async (type: string) => {
+    const url = new URL(window.location.href)
+    if (type) {
+      url.searchParams.set('type', type)
+    } else {
+      url.searchParams.delete('type')
+    }
+    window.history.pushState({}, '', url.toString())
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <Breadcrumbs items={breadcrumbs} />
-          
-          <div className="text-center mt-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Resources
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Discover insights, guides, and educational content to help you succeed with customer service.
-            </p>
-            
-            <div className="max-w-2xl mx-auto">
-              <SearchBar 
-                placeholder="Search resources..." 
-                onSearch={handleSearch}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <Breadcrumbs items={breadcrumbItems} />
+        
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Resources
+          </h1>
+          <p className="text-xl text-gray-600 mb-8">
+            Explore our collection of guides, reports, and insights to help you succeed
+          </p>
+          
+          <div className="max-w-2xl mb-8">
+            <SearchBar 
+              placeholder="Search resources..." 
+              defaultValue={searchQuery}
+            />
+          </div>
+
           <ResourceFilter
-            types={resourceTypes}
+            resourceTypes={RESOURCE_TYPES}
             selectedType={selectedType}
-            onTypeChange={handleTypeFilter}
+            onTypeChange={handleTypeChange}
           />
         </div>
-      </div>
 
-      {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {filteredResources.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-500 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No resources found</h3>
-            <p className="text-gray-500">
-              {searchQuery || selectedType 
-                ? 'Try adjusting your search or filter criteria.' 
-                : 'No resources are available at this time.'
-              }
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-gray-600">
-                {filteredResources.length} resource{filteredResources.length !== 1 ? 's' : ''} found
-              </p>
-            </div>
-
+        {/* Featured Resources */}
+        {featuredResources.length > 0 && (
+          <section className="mb-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Resources</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredResources.map((resource) => (
+              {featuredResources.slice(0, 6).map((resource: Resource) => (
                 <ResourceCard key={resource.id} resource={resource} />
               ))}
             </div>
-          </>
+          </section>
         )}
+
+        {/* All Resources or Filtered Results */}
+        <section>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {selectedType 
+                ? `${RESOURCE_TYPES.find(t => t.key === selectedType)?.label || 'Resources'}` 
+                : 'All Resources'
+              }
+            </h2>
+            <p className="text-gray-600">
+              {filteredResources.length} {filteredResources.length === 1 ? 'resource' : 'resources'} found
+            </p>
+          </div>
+
+          {filteredResources.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredResources.map((resource: Resource) => (
+                <ResourceCard 
+                  key={resource.id} 
+                  resource={resource}
+                  showExcerpt={true}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No resources found
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {searchQuery 
+                    ? `No resources match your search for "${searchQuery}"`
+                    : selectedType 
+                      ? `No ${RESOURCE_TYPES.find(t => t.key === selectedType)?.label?.toLowerCase()} available`
+                      : 'No resources available at the moment'
+                  }
+                </p>
+                <button 
+                  onClick={() => {
+                    const url = new URL(window.location.href)
+                    url.searchParams.delete('type')
+                    url.searchParams.delete('search')
+                    window.history.pushState({}, '', url.toString())
+                  }}
+                  className="btn-secondary"
+                >
+                  Clear filters
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Newsletter Signup */}
+        <section className="mt-16 bg-blue-50 rounded-lg p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Stay updated with our latest resources
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Get the latest guides, reports, and insights delivered to your inbox
+          </p>
+          <div className="max-w-md mx-auto flex gap-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button className="btn-primary">
+              Subscribe
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   )
