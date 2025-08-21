@@ -7,6 +7,7 @@ import { FaBars, FaTimes, FaStar, FaTachometerAlt, FaChevronDown, FaGlobe, FaHea
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLanguageOpen, setIsLanguageOpen] = useState(false)
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false)
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -41,35 +42,47 @@ export default function Header() {
             <Link href="/solutions" className="text-gray-700 hover:text-zendesk-green transition-colors font-medium">
               Solutions
             </Link>
-            <Link href="/resources" className="text-gray-700 hover:text-zendesk-green transition-colors font-medium">
-              Resources
-            </Link>
+            
+            {/* Resources Dropdown */}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setIsResourcesOpen(true)}
+                onMouseLeave={() => setIsResourcesOpen(false)}
+                className="flex items-center space-x-1 text-gray-700 hover:text-zendesk-green transition-colors font-medium"
+              >
+                <span>Resources</span>
+                <FaChevronDown className={`text-xs transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isResourcesOpen && (
+                <div 
+                  className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
+                  onMouseEnter={() => setIsResourcesOpen(true)}
+                  onMouseLeave={() => setIsResourcesOpen(false)}
+                >
+                  <Link href="/resources" className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-zendesk-green transition-colors">
+                    <span>All Resources</span>
+                  </Link>
+                  <div className="border-t border-gray-100 my-2"></div>
+                  <Link href="/help" className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-zendesk-green transition-colors">
+                    <FaHeadset className="text-gray-400" />
+                    <span>Help Center</span>
+                  </Link>
+                  <Link href="#" className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-zendesk-green transition-colors">
+                    <FaBuilding className="text-gray-400" />
+                    <span>Company</span>
+                  </Link>
+                  <Link href="#" className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-zendesk-green transition-colors">
+                    <FaPhone className="text-gray-400" />
+                    <span>Contact</span>
+                  </Link>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Secondary Navigation & Actions */}
           <div className="hidden xl:flex items-center space-x-6 flex-shrink-0">
-            {/* Help & Support */}
-            <div className="flex items-center space-x-4 text-sm">
-              <div className="flex items-center space-x-1 group">
-                <FaHeadset className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
-                <Link href="/help" className="text-gray-600 hover:text-zendesk-green transition-colors whitespace-nowrap">
-                  Help Center
-                </Link>
-              </div>
-              <div className="flex items-center space-x-1 group">
-                <FaBuilding className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
-                <Link href="#" className="text-gray-600 hover:text-zendesk-green transition-colors whitespace-nowrap">
-                  Company
-                </Link>
-              </div>
-              <div className="flex items-center space-x-1 group">
-                <FaPhone className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
-                <Link href="#" className="text-gray-600 hover:text-zendesk-green transition-colors whitespace-nowrap">
-                  Contact
-                </Link>
-              </div>
-            </div>
-
             {/* Language Selector */}
             <div className="relative">
               <button
@@ -164,46 +177,50 @@ export default function Header() {
                 >
                   Solutions
                 </Link>
-                <Link 
-                  href="/resources" 
-                  className="block px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Resources
-                </Link>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 my-4"></div>
-
-              {/* Secondary Navigation */}
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2 px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-md group">
-                  <FaHeadset className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
+                
+                {/* Resources Section */}
+                <div className="space-y-1">
                   <Link 
-                    href="/help" 
+                    href="/resources" 
+                    className="block px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Help Center
+                    Resources
                   </Link>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-md group">
-                  <FaBuilding className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
-                  <Link 
-                    href="#" 
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Company
-                  </Link>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-md group">
-                  <FaPhone className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
-                  <Link 
-                    href="#" 
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Contact us
-                  </Link>
+                  
+                  {/* Sub-items under Resources */}
+                  <div className="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
+                    <div className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md group">
+                      <FaHeadset className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
+                      <Link 
+                        href="/help" 
+                        className="text-sm"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Help Center
+                      </Link>
+                    </div>
+                    <div className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md group">
+                      <FaBuilding className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
+                      <Link 
+                        href="#" 
+                        className="text-sm"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Company
+                      </Link>
+                    </div>
+                    <div className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md group">
+                      <FaPhone className="text-gray-400 group-hover:text-zendesk-green transition-colors" />
+                      <Link 
+                        href="#" 
+                        className="text-sm"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Contact us
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
 
