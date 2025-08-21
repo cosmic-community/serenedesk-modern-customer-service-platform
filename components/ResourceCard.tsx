@@ -1,68 +1,90 @@
 import Link from 'next/link'
 import { Resource } from '@/types'
 
-interface ResourceCardProps {
+export interface ResourceCardProps {
   resource: Resource
+  showExcerpt?: boolean
 }
 
-export default function ResourceCard({ resource }: ResourceCardProps) {
+export default function ResourceCard({ resource, showExcerpt = true }: ResourceCardProps) {
+  const resourceType = resource.metadata?.resource_type
+  const excerpt = resource.metadata?.excerpt
+  const author = resource.metadata?.author
+  const publicationDate = resource.metadata?.publication_date
+  const featuredImage = resource.metadata?.featured_image
+  const tags = resource.metadata?.tags
+
   return (
-    <Link href={`/resources/${resource.slug}`} className="card p-0 hover:shadow-lg transition-shadow duration-200">
-      {resource.metadata?.featured_image && (
-        <div className="aspect-video w-full">
+    <div className="bg-white rounded-lg border hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+      {featuredImage && (
+        <div className="aspect-w-16 aspect-h-9">
           <img
-            src={`${resource.metadata.featured_image.imgix_url}?w=400&h=225&fit=crop&auto=format,compress`}
+            src={`${featuredImage.imgix_url}?w=600&h=300&fit=crop&auto=format,compress`}
             alt={resource.title}
-            className="w-full h-full object-cover rounded-t-xl"
-            width="400"
-            height="225"
+            className="w-full h-48 object-cover"
           />
         </div>
       )}
       
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-3">
-          {resource.metadata?.resource_type && (
-            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-              {resource.metadata.resource_type.value}
-            </span>
-          )}
-          {resource.metadata?.publication_date && (
-            <span className="text-gray-500 text-sm">
-              {new Date(resource.metadata.publication_date).toLocaleDateString()}
+        <div className="flex items-center mb-3">
+          {resourceType && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              {resourceType.value}
             </span>
           )}
         </div>
-        
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-          {resource.title}
+
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <Link 
+            href={`/resources/${resource.slug}`}
+            className="hover:text-blue-600 transition-colors duration-200"
+          >
+            {resource.title}
+          </Link>
         </h3>
-        
-        {resource.metadata?.excerpt && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-            {resource.metadata.excerpt}
+
+        {showExcerpt && excerpt && (
+          <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+            {excerpt}
           </p>
         )}
-        
-        {resource.metadata?.author && (
-          <p className="text-gray-500 text-sm">
-            By {resource.metadata.author}
-          </p>
-        )}
-        
-        {resource.metadata?.tags && resource.metadata.tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
-            {resource.metadata.tags.slice(0, 3).map((tag, index) => (
+
+        {tags && Array.isArray(tags) && tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-4">
+            {tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs"
+                className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700"
               >
                 {tag.name}
               </span>
             ))}
+            {tags.length > 3 && (
+              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                +{tags.length - 3} more
+              </span>
+            )}
           </div>
         )}
+
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center space-x-4">
+            {author && (
+              <span>By {author}</span>
+            )}
+            {publicationDate && (
+              <span>{new Date(publicationDate).toLocaleDateString()}</span>
+            )}
+          </div>
+          <Link 
+            href={`/resources/${resource.slug}`}
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Read more →
+          </Link>
+        </div>
       </div>
-    </Link>
+    </div>
   )
 }
