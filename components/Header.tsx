@@ -17,9 +17,9 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 flex-shrink-0">
             <div className="w-8 h-8 bg-zendesk-green rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-sm">Z</span>
+              <span className="text-white font-bold text-sm">S</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900 hidden sm:block">zendesk</span>
+            <span className="text-xl font-semibold text-gray-900 hidden sm:block">SereneDesk</span>
           </Link>
 
           {/* Primary Navigation */}
@@ -160,7 +160,7 @@ export default function Header() {
                     className="font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Zendesk AI Agents
+                    SereneDesk AI Agents
                   </Link>
                 </div>
                 <Link 

@@ -9,7 +9,7 @@ export default function AIServiceSection() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Bring together customer conversations from all channels, giving agents the context they need. 
             Access dashboards and data easily for better service quality. Start resolving requests 
-            instantly with Zendesk AI for any use case.
+            instantly with SereneDesk AI for any use case.
           </p>
         </div>
 

@@ -20,7 +20,7 @@ module.exports = {
           800: '#166534',
           900: '#14532d',
         },
-        zendesk: {
+        serenedesk: {
           green: '#03363d',
           'light-green': '#c9f7f5',
           'accent-green': '#1f73b7',
@@ -30,7 +30,7 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         'hero-gradient': 'linear-gradient(135deg, #03363d 0%, #1f73b7 100%)',
-        'zendesk-gradient': 'linear-gradient(135deg, #03363d 0%, #16a34a 100%)',
+        'serenedesk-gradient': 'linear-gradient(135deg, #03363d 0%, #16a34a 100%)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

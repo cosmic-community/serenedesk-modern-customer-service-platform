@@ -27,11 +27,11 @@ This application was built using the following prompts to generate the content s
 
 ### Content Model Prompt
 
-> "what prompt should I give the code builder ai to build out the website for this zendesk clone?"
+> "what prompt should I give the code builder ai to build out the website for this serenedesk clone?"
 
 ### Code Generation Prompt
 
-> Build a modern customer service platform website called "SereneDesk" that is a Zendesk clone. Use the following structure and features:
+> Build a modern customer service platform website called "SereneDesk" that is a SereneDesk clone. Use the following structure and features:
 > 
 > ### TECH STACK & SETUP
 > - Next.js 14+ with App Router
@@ -44,7 +44,7 @@ This application was built using the following prompts to generate the content s
 > The website should integrate with a headless CMS and handle these content types:
 > 
 > 1. **Products** (main offerings)
->    - Zendesk AI Agents, Zendesk Support
+>    - SereneDesk AI Agents, SereneDesk Support
 >    - Each has: name, tagline, description, features, pricing tiers, hero image
 >    - Product categories: AI & Automation, Customer Support, etc.
 > 
@@ -104,7 +104,7 @@ This application was built using the following prompts to generate the content s
 > - Company information
 > 
 > ### KEY DESIGN REQUIREMENTS
-> - Clean, professional SaaS aesthetic (similar to Zendesk)
+> - Clean, professional SaaS aesthetic (similar to SereneDesk)
 > - Prominent CTAs for demos/trials
 > - Search functionality for help content
 > - Responsive navigation
@@ -131,7 +131,7 @@ This application was built using the following prompts to generate the content s
 > - Featured content handling
 > - Date-based sorting and filtering
 > 
-> Build this as a modern, performant website that could serve as a professional alternative to Zendesk's marketing site, with clean code structure and reusable components.
+> Build this as a modern, performant website that could serve as a professional alternative to SereneDesk's marketing site, with clean code structure and reusable components.
 
 The app has been tailored to work with your existing Cosmic content structure and includes all the features requested above.
 

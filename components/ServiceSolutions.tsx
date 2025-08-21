@@ -1,7 +1,7 @@
 export default function ServiceSolutions() {
   const solutions = [
     {
-      title: "Meet Zendesk agents",
+      title: "Meet SereneDesk agents",
       description: "A fully connected team of AI and human agents, built for true resolutions. Whether AI handles it instantly or copilot assists a human, every issue is resolved.",
       icon: "🤝",
       color: "from-green-600 to-green-700",
@@ -13,7 +13,7 @@ export default function ServiceSolutions() {
     },
     {
       title: "Omnichannel resolutions including Voice",
-      description: "Zendesk Voice delivers seamless resolutions in any contact center. With advanced call routing, intelligent IVR, automation, and AI, every call is resolved faster and better.",
+      description: "SereneDesk Voice delivers seamless resolutions in any contact center. With advanced call routing, intelligent IVR, automation, and AI, every call is resolved faster and better.",
       icon: "📞",
       color: "from-green-600 to-green-700",
       buttonText: "Explore Voice",
@@ -27,7 +27,7 @@ export default function ServiceSolutions() {
       description: "Deliver AI-powered service across every department with an easy-to-use solution. Resolve common requests instantly, automate workflows, and keep every employee productive.",
       icon: "👥",
       color: "from-green-600 to-green-700",
-      buttonText: "Explore Zendesk for employee service",
+      buttonText: "Explore SereneDesk for employee service",
       mockup: {
         type: "workflow",
         content: "IT helpdesk interface..."

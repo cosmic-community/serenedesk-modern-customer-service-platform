@@ -18,7 +18,7 @@ export default function Hero() {
         <div className="text-center">
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
             Deliver beautifully simple service with{' '}
-            <span className="text-green-600">Zendesk AI Agents</span>
+            <span className="text-green-600">SereneDesk AI Agents</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed">
@@ -48,7 +48,7 @@ export default function Hero() {
           {/* Demo image/video placeholder */}
           <div className="relative max-w-6xl mx-auto">
             <div className="relative bg-gray-100 rounded-2xl overflow-hidden shadow-2xl">
-              {/* Mock interface - similar to Zendesk's demo */}
+              {/* Mock interface - similar to SereneDesk's demo */}
               <div className="bg-white border-b border-gray-200 p-4">
                 <div className="flex items-center space-x-3">
                   <div className="flex space-x-2">

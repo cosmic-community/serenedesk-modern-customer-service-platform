@@ -26,12 +26,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/products/zendesk-ai-agents" className="text-gray-400 hover:text-white">
+                <Link href="/products/serenedesk-ai-agents" className="text-gray-400 hover:text-white">
                   AI Agents
                 </Link>
               </li>
               <li>
-                <Link href="/products/zendesk-support" className="text-gray-400 hover:text-white">
+                <Link href="/products/serenedesk-support" className="text-gray-400 hover:text-white">
                   Support Platform
                 </Link>
               </li>
