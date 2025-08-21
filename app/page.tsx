@@ -1,4 +1,5 @@
 import Hero from '@/components/Hero'
+import CustomerLogos from '@/components/CustomerLogos'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import CustomerTestimonials from '@/components/CustomerTestimonials'
 import FeaturedResources from '@/components/FeaturedResources'
@@ -21,6 +22,7 @@ export default async function HomePage() {
   return (
     <div>
       <Hero />
+      <CustomerLogos />
       <AwardsSection />
       <AIServiceSection />
       <ServiceSolutions />
