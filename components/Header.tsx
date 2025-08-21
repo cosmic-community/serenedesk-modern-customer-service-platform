@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { FaBars, FaTimes, FaStar } from 'react-icons/fa'
+import { FaBars, FaTimes, FaStar, FaTachometerAlt } from 'react-icons/fa'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,6 +22,12 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             <div className="flex items-center space-x-1">
+              <FaTachometerAlt className="text-blue-500 text-sm" />
+              <Link href="/dashboard" className="text-gray-700 hover:text-zendesk-green transition-colors font-medium">
+                Dashboard
+              </Link>
+            </div>
+            <div className="flex items-center space-x-1">
               <FaStar className="text-green-500 text-sm" />
               <Link href="/products" className="text-gray-700 hover:text-zendesk-green transition-colors font-medium">
                 Zendesk AI Agents
@@ -37,7 +43,7 @@ export default function Header() {
               Resources
             </Link>
             <Link href="/help" className="text-gray-700 hover:text-zendesk-green transition-colors">
-              Pricing
+              Help
             </Link>
           </nav>
 
@@ -90,6 +96,16 @@ export default function Header() {
           <div className="lg:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center space-x-1">
+                <FaTachometerAlt className="text-blue-500 text-sm" />
+                <Link 
+                  href="/dashboard" 
+                  className="text-gray-700 hover:text-zendesk-green transition-colors font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              </div>
+              <div className="flex items-center space-x-1">
                 <FaStar className="text-green-500 text-sm" />
                 <Link 
                   href="/products" 
@@ -125,7 +141,7 @@ export default function Header() {
                 className="text-gray-700 hover:text-zendesk-green transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Pricing
+                Help
               </Link>
               <hr className="border-gray-200" />
               <Link 
