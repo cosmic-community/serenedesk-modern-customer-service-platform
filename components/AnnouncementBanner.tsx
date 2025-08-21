@@ -17,6 +17,12 @@ export default function AnnouncementBanner({ announcements }: AnnouncementBanner
   }
 
   const announcement = announcements[currentIndex]
+  
+  // Add null check to prevent TypeScript errors
+  if (!announcement) {
+    return null
+  }
+
   const priority = announcement.metadata?.priority?.key
 
   const getBannerClass = () => {
